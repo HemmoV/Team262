@@ -1,0 +1,13 @@
+<div class="admin-shell">
+  <div class="container">
+    <div class="admin-topbar">
+      <a href="/admin" class="logo"><img src="/img/logo-white.svg" alt="<%= site.naam %>"></a>
+      <div class="admin-topbar-right">
+        <a href="/admin/instellingen" class="muted">Instellingen</a>
+        <a href="/" target="_blank" class="muted">Bekijk site ↗</a>
+        <span>Ingelogd als <strong><%= currentUser.username %></strong></span>
+        <form method="post" action="/admin/logout" style="margin:0;">
+          <button type="submit" class="btn btn-outline btn-sm">Uitloggen</button>
+        </form>
+      </div>
+    </div>

@@ -1,0 +1,137 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-topbar') %>
+
+<div class="admin-header-row">
+  <h1 style="margin:0;font-size:1.6rem;">Instellingen</h1>
+  <a href="/admin" class="btn btn-outline btn-sm">← Terug naar overzicht</a>
+</div>
+
+<%- include('../partials/flash') %>
+
+<% if (errors && errors.length) { %>
+  <div class="error-list">
+    Controleer de volgende velden:
+    <ul>
+      <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<form method="post" action="/admin/instellingen">
+  <h3 class="mt-0">Bedrijfsgegevens</h3>
+  <div class="form-grid">
+    <div class="form-field">
+      <label for="naam">Bedrijfsnaam *</label>
+      <input type="text" id="naam" name="naam" required value="<%= values.naam || '' %>">
+    </div>
+    <div class="form-field full">
+      <label for="slogan">Slogan</label>
+      <input type="text" id="slogan" name="slogan" value="<%= values.slogan || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="telefoon">Telefoonnummer (weergave)</label>
+      <input type="text" id="telefoon" name="telefoon" placeholder="+31 (0)35 123 45 67" value="<%= values.telefoon || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="telefoonHref">Telefoonnummer (voor bel-link)</label>
+      <input type="text" id="telefoonHref" name="telefoonHref" placeholder="+31351234567" value="<%= values.telefoonHref || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="email">E-mailadres</label>
+      <input type="email" id="email" name="email" value="<%= values.email || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="kvk">KvK-nummer</label>
+      <input type="text" id="kvk" name="kvk" value="<%= values.kvk || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="adres">Adres</label>
+      <input type="text" id="adres" name="adres" value="<%= values.adres || '' %>">
+    </div>
+    <div class="form-field">
+      <label for="plaats">Postcode + plaats</label>
+      <input type="text" id="plaats" name="plaats" value="<%= values.plaats || '' %>">
+    </div>
+  </div>
+
+  <h3>Sociale media (optioneel)</h3>
+  <div class="form-grid">
+    <div class="form-field">
+      <label for="instagram">Instagram-link</label>
+      <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/..." value="<%= values.social ? values.social.instagram : (values.instagram || '') %>">
+    </div>
+    <div class="form-field">
+      <label for="facebook">Facebook-link</label>
+      <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/..." value="<%= values.social ? values.social.facebook : (values.facebook || '') %>">
+    </div>
+    <div class="form-field">
+      <label for="linkedin">LinkedIn-link</label>
+      <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/..." value="<%= values.social ? values.social.linkedin : (values.linkedin || '') %>">
+    </div>
+  </div>
+
+  <h3>Openingstijden</h3>
+  <p class="muted" style="margin-top:-8px;">Bijvoorbeeld: "Maandag – Vrijdag" met tijden "09:00 – 18:00".</p>
+
+  <div id="openingstijden-rows">
+    <% const rijen = (values.openingstijden && values.openingstijden.length) ? values.openingstijden : [{dagen:'',tijden:''}]; %>
+    <% rijen.forEach(o => { %>
+      <div class="openingstijd-row">
+        <div class="form-field">
+          <label>Dagen</label>
+          <input type="text" name="dagen" value="<%= o.dagen || '' %>">
+        </div>
+        <div class="form-field">
+          <label>Tijden</label>
+          <input type="text" name="tijden" value="<%= o.tijden || '' %>">
+        </div>
+        <button type="button" class="btn btn-outline btn-sm openingstijd-remove">Verwijder</button>
+      </div>
+    <% }) %>
+  </div>
+  <button type="button" id="openingstijd-add" class="btn btn-outline btn-sm" style="margin-bottom:24px;">+ Regel toevoegen</button>
+
+  <div>
+    <button type="submit" class="btn btn-primary">Instellingen opslaan</button>
+  </div>
+</form>
+
+<template id="openingstijd-template">
+  <div class="openingstijd-row">
+    <div class="form-field">
+      <label>Dagen</label>
+      <input type="text" name="dagen" value="">
+    </div>
+    <div class="form-field">
+      <label>Tijden</label>
+      <input type="text" name="tijden" value="">
+    </div>
+    <button type="button" class="btn btn-outline btn-sm openingstijd-remove">Verwijder</button>
+  </div>
+</template>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.getElementById('openingstijden-rows');
+    const template = document.getElementById('openingstijd-template');
+    const addBtn = document.getElementById('openingstijd-add');
+
+    addBtn.addEventListener('click', () => {
+      const clone = template.content.cloneNode(true);
+      rows.appendChild(clone);
+    });
+
+    rows.addEventListener('click', (e) => {
+      if (e.target.classList.contains('openingstijd-remove')) {
+        const row = e.target.closest('.openingstijd-row');
+        if (rows.querySelectorAll('.openingstijd-row').length > 1) {
+          row.remove();
+        } else {
+          row.querySelectorAll('input').forEach((i) => { i.value = ''; });
+        }
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/admin-footer') %>

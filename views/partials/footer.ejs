@@ -1,0 +1,32 @@
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo"><img src="/img/logo-white.svg" alt="<%= site.naam %>"></div>
+          <p>Als petrolheads weten we welke auto's leuk zijn en welke hun waarde goed zullen behouden of zelfs in waarde zullen toenemen. Wij helpen je graag de juiste te vinden.</p>
+        </div>
+        <div>
+          <h4>Navigatie</h4>
+          <ul>
+            <li><a href="/aanbod">Ons aanbod</a></li>
+            <li><a href="/over-ons">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:<%= site.telefoonHref %>"><%= site.telefoon %></a></li>
+            <li><a href="mailto:<%= site.email %>"><%= site.email %></a></li>
+            <li><%= site.adres %><br><%= site.plaats %></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; <%= new Date().getFullYear() %> <%= site.naam %>. Alle rechten voorbehouden.</span>
+        <span>KvK <%= site.kvk %></span>
+      </div>
+    </div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<main>
+  <section style="padding-bottom:40px;">
+    <div class="container">
+      <p style="margin-bottom:24px;"><a href="/aanbod" class="muted">← Terug naar aanbod</a></p>
+
+      <span class="badge badge-<%= auto.status %>" style="position:static;display:inline-block;margin-bottom:10px;"><%= auto.status %></span>
+      <div class="detail-header">
+        <h1 class="mt-0" style="margin-bottom:0;"><%= auto.merk %> <%= auto.model %></h1>
+        <div class="detail-price-wrap">
+          <div class="detail-price"><%= auto.prijs ? '€ ' + Number(auto.prijs).toLocaleString('nl-NL') : 'Prijs op aanvraag' %></div>
+          <% if (auto.btw === 'marge' || auto.btw === 'btw') { %>
+            <div class="detail-price-note">(<%= auto.btw === 'marge' ? 'marge auto' : 'BTW auto' %>)</div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="gallery-main">
+        <% if (auto.images && auto.images.length) { %>
+          <img src="/uploads/cars/<%= auto.images[0].filename %>" alt="<%= auto.merk %> <%= auto.model %>">
+        <% } else { %>
+          <div class="no-image">Geen foto beschikbaar</div>
+        <% } %>
+      </div>
+      <% if (auto.images && auto.images.length > 1) { %>
+        <div class="gallery-thumbs">
+          <% auto.images.forEach((img, i) => { %>
+            <img src="<%= smallThumbUrl(img.filename) %>" data-full="/uploads/cars/<%= img.filename %>" class="<%= i === 0 ? 'active' : '' %>" alt="Foto <%= i + 1 %>">
+          <% }) %>
+        </div>
+      <% } %>
+
+      <div class="detail-cta">
+        <p>Interesse in deze auto? Neem contact op voor meer informatie of om een proefrit in te plannen.</p>
+        <div class="detail-cta-actions">
+          <a href="/over-ons" class="btn btn-primary">Contact opnemen</a>
+          <a href="tel:<%= site.telefoonHref %>" class="btn btn-outline">Bel <%= site.telefoon %></a>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <h2 style="margin-top:36px;">Omschrijving</h2>
+        <% if (auto.beschrijving) { %>
+          <div class="car-description"><%- auto.beschrijving %></div>
+        <% } else { %>
+          <p>Geen aanvullende omschrijving beschikbaar. Neem contact op voor meer informatie over deze auto.</p>
+        <% } %>
+
+        <h2 style="margin-top:36px;">Specificaties</h2>
+        <table class="spec-table">
+          <tr><td>Merk</td><td><%= auto.merk %></td></tr>
+          <tr><td>Model</td><td><%= auto.model %></td></tr>
+          <tr><td>Bouwjaar</td><td><%= auto.bouwjaar || '—' %></td></tr>
+          <tr><td>Kilometerstand</td><td><%= auto.km_stand ? Number(auto.km_stand).toLocaleString('nl-NL') + ' km' : '—' %></td></tr>
+          <tr><td>Vermogen</td><td><%= auto.vermogen_pk ? auto.vermogen_pk + ' pk' : '—' %></td></tr>
+          <tr><td>Brandstof</td><td><%= auto.brandstof || '—' %></td></tr>
+          <tr><td>Transmissie</td><td><%= auto.transmissie || '—' %></td></tr>
+          <tr><td>Kleur</td><td><%= auto.kleur || '—' %></td></tr>
+          <tr><td>BTW</td><td><%= auto.btw === 'marge' ? 'Marge auto' : auto.btw === 'btw' ? 'BTW auto' : '—' %></td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

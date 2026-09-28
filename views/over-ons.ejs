@@ -1,0 +1,109 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-media">
+        <img class="hero-media-img" src="/img/over-ons-hero.jpg" alt="Team262 rallyauto op het circuit">
+        <div class="hero-media-overlay"></div>
+        <div class="hero-content hero-content-spread">
+          <h1 style="text-shadow:0 1px 6px rgba(0,0,0,0.7);">Specialist in exclusieve en sportieve auto's</h1>
+          <div class="hero-lead-columns">
+            <p class="lead" style="color:var(--text);text-shadow:0 1px 4px rgba(0,0,0,0.7);">Team262 Cars verkoopt exclusieve en sportieve auto's voor echte petrolheads. De auto's die aangeboden worden zijn auto's die we zelf ook zouden willen rijden en die iets bijzonders hebben. Of het nou gaat om het laatste model met een atmosferische motor, de laatste V12 of een gelimiteerde editie, het zijn stuk voor stuk fantastische auto's om te rijden.</p>
+            <p class="lead" style="color:var(--text);text-shadow:0 1px 4px rgba(0,0,0,0.7);">Bij het selectie proces wordt de auto goed onderzocht op een betrouwbare en aantoonbare historie. Ben je op zoek naar een bijzondere auto of heb je er eentje die je juist wil verkopen? Neem dan contact met ons op.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:32px;">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Neem contact op</h2>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div>
+          <% if (verzonden) { %>
+            <div class="flash flash-success">Bedankt voor uw bericht! We nemen zo snel mogelijk contact met u op.</div>
+          <% } %>
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="flash flash-error"><%= error %></div>
+          <% } %>
+          <% const fd = typeof formData !== 'undefined' ? formData : {}; %>
+          <form method="post" action="/over-ons">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="naam">Naam *</label>
+                <input type="text" id="naam" name="naam" required value="<%= fd.naam || '' %>">
+              </div>
+              <div class="form-field">
+                <label for="email">E-mailadres *</label>
+                <input type="email" id="email" name="email" required value="<%= fd.email || '' %>">
+              </div>
+              <div class="form-field">
+                <label for="telefoon">Telefoonnummer</label>
+                <input type="tel" id="telefoon" name="telefoon" value="<%= fd.telefoon || '' %>">
+              </div>
+              <div class="form-field full">
+                <label for="bericht">Bericht *</label>
+                <textarea id="bericht" name="bericht" required><%= fd.bericht || '' %></textarea>
+              </div>
+              <% if (typeof hcaptchaSiteKey !== 'undefined' && hcaptchaSiteKey) { %>
+                <div class="form-field full">
+                  <div class="h-captcha" data-sitekey="<%= hcaptchaSiteKey %>"></div>
+                </div>
+              <% } %>
+            </div>
+            <button type="submit" class="btn btn-primary">Bericht versturen</button>
+          </form>
+        </div>
+
+        <div>
+          <div class="price-box" style="position:static;">
+            <h3 class="mt-0">Gegevens</h3>
+            <table class="spec-table">
+              <tr><td>Telefoon</td><td><a href="tel:<%= site.telefoonHref %>"><%= site.telefoon %></a></td></tr>
+              <tr><td>E-mail</td><td><a href="mailto:<%= site.email %>"><%= site.email %></a></td></tr>
+              <tr><td>Adres</td><td><%= site.adres %><br><%= site.plaats %></td></tr>
+            </table>
+            <h3>Openingstijden</h3>
+            <table class="spec-table">
+              <% site.openingstijden.forEach(o => { %>
+                <tr><td><%= o.dagen %></td><td><%= o.tijden %></td></tr>
+              <% }) %>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars-section">
+    <div class="container">
+      <div class="pillar-grid">
+        <div class="pillar">
+          <h3>Wat we zelf zouden rijden</h3>
+          <p>Alleen auto's waar we zelf enthousiast van worden. Bijzondere modellen met karakter, de juiste specificaties en een verhaal dat klopt.</p>
+        </div>
+        <div class="pillar">
+          <h3>Voor en door petrolheads</h3>
+          <p>Team 262 is ontstaan uit pure autoliefde. Dat zie je terug in onze selectie, onze kennis en de manier waarop we naar iedere auto kijken.</p>
+        </div>
+        <div class="pillar">
+          <h3>Oog voor waarde</h3>
+          <p>Rijplezier staat voorop, maar we kijken verder. We selecteren auto's die hun waarde goed weten te behouden of de potentie hebben om in waarde te groeien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<% if (typeof hcaptchaSiteKey !== 'undefined' && hcaptchaSiteKey) { %>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<% } %>
+
+<%- include('partials/footer') %>

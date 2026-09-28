@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%
+    // Per pagina aan te leveren via res.render(): title, description, noindex, ogImage.
+    // Valt overal netjes terug op algemene bedrijfsgegevens als een pagina niets specifieks meegeeft.
+    const _title = typeof title !== 'undefined' && title ? title : `${site.naam} — ${site.slogan}`;
+    const _description = typeof description !== 'undefined' && description
+      ? description
+      : `${site.naam} verkoopt exclusieve en sportieve auto's voor echte petrolheads. Bekijk ons actuele aanbod van zorgvuldig geselecteerde auto's.`;
+    const _isAdminPage = typeof path !== 'undefined' && path.indexOf('/admin') === 0;
+    const _noindex = (typeof noindex !== 'undefined' && noindex) || _isAdminPage;
+    const _canonical = typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : null;
+    const _ogImagePath = typeof ogImage !== 'undefined' && ogImage ? ogImage : null;
+    const _ogImageUrl = _ogImagePath && _canonical ? new URL(_ogImagePath, _canonical).toString() : null;
+  %>
+  <title><%= _title %></title>
+  <meta name="description" content="<%= _description %>">
+  <meta name="robots" content="<%= _noindex ? 'noindex, nofollow' : 'index, follow' %>">
+  <% if (_canonical && !_noindex) { %>
+  <link rel="canonical" href="<%= _canonical %>">
+  <% } %>
+
+  <meta property="og:site_name" content="<%= site.naam %>">
+  <meta property="og:locale" content="nl_NL">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= _title %>">
+  <meta property="og:description" content="<%= _description %>">
+  <% if (_canonical) { %><meta property="og:url" content="<%= _canonical %>"><% } %>
+  <% if (_ogImageUrl) { %><meta property="og:image" content="<%= _ogImageUrl %>"><% } %>
+
+  <meta name="twitter:card" content="<%= _ogImageUrl ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:title" content="<%= _title %>">
+  <meta name="twitter:description" content="<%= _description %>">
+  <% if (_ogImageUrl) { %><meta name="twitter:image" content="<%= _ogImageUrl %>"><% } %>
+
+  <link rel="icon" href="/img/logo-black.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0c0e11">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>

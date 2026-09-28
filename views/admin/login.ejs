@@ -1,0 +1,24 @@
+<%- include('../partials/head') %>
+<div class="login-shell">
+  <div class="login-box">
+    <div class="logo"><img src="/img/logo-white.svg" alt="<%= site.naam %>"></div>
+    <h2 class="text-center" style="font-size:1.3rem;">Inloggen beheerpaneel</h2>
+    <% if (error) { %>
+      <div class="flash flash-error"><%= error %></div>
+    <% } %>
+    <form method="post" action="/admin/login">
+      <div class="form-field">
+        <label for="username">Gebruikersnaam</label>
+        <input type="text" id="username" name="username" required autofocus>
+      </div>
+      <div class="form-field">
+        <label for="password">Wachtwoord</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Inloggen</button>
+    </form>
+  </div>
+</div>
+<script src="/js/main.js"></script>
+</body>
+</html>

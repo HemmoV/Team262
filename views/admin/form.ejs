@@ -1,0 +1,175 @@
+<%- include('../partials/head') %>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+<%- include('../partials/admin-topbar') %>
+
+<div class="admin-header-row">
+  <h1 style="margin:0;font-size:1.6rem;"><%= auto && auto.id ? 'Auto bewerken' : 'Auto toevoegen' %></h1>
+  <a href="/admin" class="btn btn-outline btn-sm">← Terug naar overzicht</a>
+</div>
+
+<%- include('../partials/flash') %>
+
+<% if (errors && errors.length) { %>
+  <div class="error-list">
+    Controleer de volgende velden:
+    <ul>
+      <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<form id="auto-form" method="post" enctype="multipart/form-data"
+      action="<%= auto && auto.id ? '/admin/auto/' + auto.id + '/bewerken' : '/admin/auto/nieuw' %>">
+  <div class="form-grid">
+    <div class="form-field">
+      <label for="merk">Merk *</label>
+      <input type="text" id="merk" name="merk" required value="<%= auto ? auto.merk || '' : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="model">Model *</label>
+      <input type="text" id="model" name="model" required value="<%= auto ? auto.model || '' : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="bouwjaar">Bouwjaar</label>
+      <input type="number" id="bouwjaar" name="bouwjaar" min="1900" max="2100" value="<%= auto && auto.bouwjaar ? auto.bouwjaar : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="km_stand">Kilometerstand</label>
+      <input type="number" id="km_stand" name="km_stand" min="0" value="<%= auto && auto.km_stand ? auto.km_stand : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="vermogen_pk">Vermogen (pk)</label>
+      <input type="number" id="vermogen_pk" name="vermogen_pk" min="0" value="<%= auto && auto.vermogen_pk ? auto.vermogen_pk : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="prijs">Prijs (€)</label>
+      <input type="number" id="prijs" name="prijs" min="0" value="<%= auto && auto.prijs ? auto.prijs : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="brandstof">Brandstof</label>
+      <select id="brandstof" name="brandstof">
+        <option value="">— Kies —</option>
+        <% ['Benzine','Diesel','Elektrisch','Hybride','LPG'].forEach(o => { %>
+          <option value="<%= o %>" <%= auto && auto.brandstof === o ? 'selected' : '' %>><%= o %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="transmissie">Transmissie</label>
+      <select id="transmissie" name="transmissie">
+        <option value="">— Kies —</option>
+        <% ['Automaat','Handgeschakeld'].forEach(o => { %>
+          <option value="<%= o %>" <%= auto && auto.transmissie === o ? 'selected' : '' %>><%= o %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="kleur">Kleur</label>
+      <input type="text" id="kleur" name="kleur" value="<%= auto ? auto.kleur || '' : '' %>">
+    </div>
+    <div class="form-field">
+      <label for="btw">BTW</label>
+      <select id="btw" name="btw">
+        <option value="">— Kies —</option>
+        <option value="marge" <%= auto && auto.btw === 'marge' ? 'selected' : '' %>>Marge auto</option>
+        <option value="btw" <%= auto && auto.btw === 'btw' ? 'selected' : '' %>>BTW auto</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="status">Status *</label>
+      <select id="status" name="status" required>
+        <% statuses.forEach(s => { %>
+          <option value="<%= s %>" <%= (auto && auto.status ? auto.status : 'beschikbaar') === s ? 'selected' : '' %>><%= s.charAt(0).toUpperCase() + s.slice(1) %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>&nbsp;</label>
+      <div class="checkbox-field">
+        <input type="checkbox" id="uitgelicht" name="uitgelicht" <%= auto && auto.uitgelicht ? 'checked' : '' %>>
+        <label for="uitgelicht" style="margin:0;">Uitlichten op homepage</label>
+      </div>
+    </div>
+    <div class="form-field full">
+      <label for="beschrijving-editor">Beschrijving</label>
+      <div id="beschrijving-editor" class="rich-editor"><%- auto ? (auto.beschrijving || '') : '' %></div>
+      <textarea id="beschrijving" name="beschrijving" style="display:none;"><%= auto ? auto.beschrijving || '' : '' %></textarea>
+    </div>
+
+    <% if (auto && auto.id && auto.images && auto.images.length) { %>
+      <div class="form-field full">
+        <label>Huidige foto's <span class="muted" style="font-weight:400;">(sleep om te herordenen — de eerste foto is de hoofdfoto)</span></label>
+        <div class="upload-current" id="foto-lijst">
+          <% auto.images.forEach(img => { %>
+            <div class="thumb-wrap" data-image-id="<%= img.id %>">
+              <img src="<%= smallThumbUrl(img.filename) %>" alt="">
+              <button type="submit" formaction="/admin/auto/<%= auto.id %>/foto/<%= img.id %>/verwijderen" formmethod="post" formnovalidate data-confirm="Deze foto verwijderen?" title="Verwijderen">✕</button>
+            </div>
+          <% }) %>
+        </div>
+        <input type="hidden" name="foto_volgorde" id="foto-volgorde">
+      </div>
+    <% } %>
+
+    <div class="form-field full">
+      <label for="fotos">Foto's toevoegen (JPG, PNG of WEBP, max <%= typeof maxFotoMb !== 'undefined' ? maxFotoMb : 20 %>MB per foto, max <%= typeof maxFotos !== 'undefined' ? maxFotos : 30 %> tegelijk)</label>
+      <input type="file" id="fotos" name="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary"><%= auto && auto.id ? 'Wijzigingen opslaan' : 'Auto toevoegen' %></button>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fotoLijst = document.getElementById('foto-lijst');
+    const fotoVolgorde = document.getElementById('foto-volgorde');
+
+    function syncFotoVolgorde() {
+      if (!fotoLijst || !fotoVolgorde) return;
+      const ids = Array.from(fotoLijst.children).map((el) => el.dataset.imageId);
+      fotoVolgorde.value = ids.join(',');
+    }
+
+    if (fotoLijst) {
+      new Sortable(fotoLijst, {
+        animation: 150,
+        filter: 'form, button',
+        preventOnFilter: false,
+        onEnd: syncFotoVolgorde,
+      });
+      syncFotoVolgorde();
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const quill = new Quill('#beschrijving-editor', {
+      theme: 'snow',
+      placeholder: 'Beschrijf deze auto — bijzonderheden, onderhoudshistorie, uitrusting...',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['blockquote'],
+          ['clean'],
+        ],
+      },
+    });
+
+    // Belangrijk: specifiek dít formulier selecteren (op id), niet het eerste
+    // <form>-element op de pagina — de topbar bevat ook een (uitlog-)formulier,
+    // en als dat per ongeluk gekozen wordt, wordt de beschrijving nooit
+    // bijgewerkt in het verborgen veld en dus niet opgeslagen.
+    const form = document.getElementById('auto-form');
+    const hidden = document.getElementById('beschrijving');
+    form.addEventListener('submit', () => {
+      hidden.value = quill.root.innerHTML;
+    });
+  });
+</script>
+
+<%- include('../partials/admin-footer') %>

@@ -1,0 +1,57 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-topbar') %>
+
+<div class="admin-header-row">
+  <h1 style="margin:0;font-size:1.6rem;">Auto's beheren</h1>
+  <a href="/admin/auto/nieuw" class="btn btn-primary">+ Auto toevoegen</a>
+</div>
+
+<%- include('../partials/flash') %>
+
+<% if (autos.length) { %>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Auto</th>
+        <th>Bouwjaar</th>
+        <th>Prijs</th>
+        <th>Status</th>
+        <th>Uitgelicht</th>
+        <th>Acties</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% autos.forEach(auto => { %>
+        <tr>
+          <td>
+            <% if (auto.images && auto.images.length) { %>
+              <img class="thumb" src="<%= smallThumbUrl(auto.images[0].filename) %>" alt="">
+            <% } else { %>
+              <div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--text-muted);">geen foto</div>
+            <% } %>
+          </td>
+          <td><strong><%= auto.merk %> <%= auto.model %></strong></td>
+          <td><%= auto.bouwjaar || '—' %></td>
+          <td><%= auto.prijs ? '€ ' + Number(auto.prijs).toLocaleString('nl-NL') : '—' %></td>
+          <td><span class="badge badge-<%= auto.status %>" style="position:static;"><%= auto.status %></span></td>
+          <td><%= auto.uitgelicht ? 'Ja' : '—' %></td>
+          <td class="actions">
+            <a href="/aanbod/<%= auto.slug %>" target="_blank" class="btn btn-outline btn-sm">Bekijk</a>
+            <a href="/admin/auto/<%= auto.id %>/bewerken" class="btn btn-outline btn-sm">Bewerken</a>
+            <form method="post" action="/admin/auto/<%= auto.id %>/verwijderen" data-confirm="Weet je zeker dat je <%= auto.merk %> <%= auto.model %> wilt verwijderen? Dit kan niet ongedaan worden gemaakt.">
+              <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } else { %>
+  <div class="empty-state">
+    <p>Er zijn nog geen auto's toegevoegd.</p>
+    <a href="/admin/auto/nieuw" class="btn btn-primary" style="margin-top:14px;">Eerste auto toevoegen</a>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-footer') %>

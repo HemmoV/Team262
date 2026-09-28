@@ -1,0 +1,21 @@
+<a class="car-card" href="/aanbod/<%= auto.slug %>">
+  <div class="car-image">
+    <span class="badge badge-<%= auto.status %>"><%= auto.status %></span>
+    <% if (auto.images && auto.images.length) { %>
+      <img src="<%= thumbUrl(auto.images[0].filename) %>" alt="<%= auto.merk %> <%= auto.model %>" loading="lazy">
+    <% } else { %>
+      <div class="no-image">Geen foto beschikbaar</div>
+    <% } %>
+  </div>
+  <div class="car-body">
+    <h3><%= auto.merk %> <%= auto.model %></h3>
+    <div class="car-sub"><%= auto.bouwjaar || '—' %><% if (auto.kleur) { %> · <%= auto.kleur %><% } %></div>
+    <div class="car-meta">
+      <% if (auto.km_stand) { %><span><%= Number(auto.km_stand).toLocaleString('nl-NL') %> km</span><% } %>
+      <% if (auto.vermogen_pk) { %><span><%= auto.vermogen_pk %> pk</span><% } %>
+      <% if (auto.transmissie) { %><span><%= auto.transmissie %></span><% } %>
+      <% if (auto.brandstof) { %><span><%= auto.brandstof %></span><% } %>
+    </div>
+    <div class="car-price"><%= auto.prijs ? '€ ' + Number(auto.prijs).toLocaleString('nl-NL') : 'Prijs op aanvraag' %></div>
+  </div>
+</a>

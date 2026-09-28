@@ -1,0 +1,29 @@
+{
+  "name": "team262-website",
+  "version": "1.0.0",
+  "description": "Website voor Team262 - exclusieve en sportieve auto's",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed.js",
+    "create-admin": "node scripts/create-admin.js",
+    "generate-thumbs": "node scripts/generate-thumbs.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "connect-sqlite3": "^0.9.13",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "multer": "^2.2.0",
+    "nodemailer": "^10.0.1",
+    "sanitize-html": "^2.17.7",
+    "sharp": "^0.35.4"
+  }
+}

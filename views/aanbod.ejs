@@ -1,0 +1,75 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<main>
+  <section style="padding-top:56px;padding-bottom:24px;">
+    <div class="container">
+      <span class="eyebrow">Aanbod</span>
+      <h1 style="font-size:2.2rem;">Ons actuele aanbod</h1>
+      <p>Blader door onze selectie exclusieve en sportieve auto's.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="container">
+      <form class="filter-bar" method="get" action="/aanbod">
+        <div class="field">
+          <label for="brandstof">Brandstof</label>
+          <select name="brandstof" id="brandstof">
+            <option value="">Alle</option>
+            <% brandstofOpties.forEach(o => { %>
+              <option value="<%= o %>" <%= filters.brandstof === o ? 'selected' : '' %>><%= o %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="transmissie">Transmissie</label>
+          <select name="transmissie" id="transmissie">
+            <option value="">Alle</option>
+            <% transmissieOpties.forEach(o => { %>
+              <option value="<%= o %>" <%= filters.transmissie === o ? 'selected' : '' %>><%= o %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="minprijs">Prijs vanaf</label>
+          <input type="number" name="minprijs" id="minprijs" placeholder="€ 0" value="<%= filters.minprijs || '' %>">
+        </div>
+        <div class="field">
+          <label for="maxprijs">Prijs tot</label>
+          <input type="number" name="maxprijs" id="maxprijs" placeholder="Geen maximum" value="<%= filters.maxprijs || '' %>">
+        </div>
+        <div class="field">
+          <label for="sort">Sorteren</label>
+          <select name="sort" id="sort">
+            <option value="nieuwste" <%= filters.sort === 'nieuwste' || !filters.sort ? 'selected' : '' %>>Nieuwste eerst</option>
+            <option value="prijs_asc" <%= filters.sort === 'prijs_asc' ? 'selected' : '' %>>Prijs laag - hoog</option>
+            <option value="prijs_desc" <%= filters.sort === 'prijs_desc' ? 'selected' : '' %>>Prijs hoog - laag</option>
+            <option value="bouwjaar_desc" <%= filters.sort === 'bouwjaar_desc' ? 'selected' : '' %>>Bouwjaar nieuw - oud</option>
+            <option value="bouwjaar_asc" <%= filters.sort === 'bouwjaar_asc' ? 'selected' : '' %>>Bouwjaar oud - nieuw</option>
+          </select>
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" type="submit">Filteren</button>
+        </div>
+        <% if (filters.brandstof || filters.transmissie || filters.minprijs || filters.maxprijs) { %>
+          <div class="field"><a class="btn btn-outline" href="/aanbod">Wissen</a></div>
+        <% } %>
+      </form>
+
+      <% if (autos.length) { %>
+        <div class="car-grid">
+          <% autos.forEach(auto => { %>
+            <%- include('partials/car-card', { auto }) %>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <p>Geen auto's gevonden die aan deze filters voldoen. Probeer andere filters of bekijk het volledige aanbod.</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>
