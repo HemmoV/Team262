@@ -1,0 +1,44 @@
+# Alternatief voor PM2: de shop + database in Docker op de VPS.
+# De shop is alleen lokaal bereikbaar (127.0.0.1:3001); nginx op de VPS stuurt
+# shop.team262.nl door (zie nginx-shop.team262.nl.conf).
+#
+# Gebruik (vanuit de map shop/deploy):
+#   cp ../.env.example .env   # en vul POSTGRES_PASSWORD, ADMIN_PASSWORD en SESSION_SECRET in
+#   docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  shop:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3001:3001'
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?vul POSTGRES_PASSWORD in}@shop-db:5432/team262shop
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?vul ADMIN_PASSWORD in}
+      SESSION_SECRET: ${SESSION_SECRET:?vul SESSION_SECRET in}
+    volumes:
+      - shop-uploads:/app/public/uploads
+    depends_on:
+      shop-db:
+        condition: service_healthy
+
+  shop-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: team262shop
+    volumes:
+      - shop-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  shop-pgdata:
+  shop-uploads:

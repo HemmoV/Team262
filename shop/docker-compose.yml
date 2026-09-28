@@ -1,0 +1,54 @@
+# Lokale testomgeving voor de Team 262 Shop.
+# Start met:  docker compose up --build   →  http://localhost:3001
+# Draait naast de autosite (poort 3000 / database 5432) zonder conflicten.
+
+services:
+  shop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@shop-db:5432/team262shop
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      SESSION_SECRET: ${SESSION_SECRET:-lokale-dev-sessie-sleutel-niet-voor-productie}
+    volumes:
+      - shop-uploads:/app/public/uploads
+    depends_on:
+      shop-db:
+        condition: service_healthy
+
+  # Eenmalige taak die demo-categorieën en -producten laadt (bestaande data blijft ongemoeid)
+  shop-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: sh -c "npx prisma migrate deploy && npx tsx prisma/seed.ts"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@shop-db:5432/team262shop
+    depends_on:
+      shop-db:
+        condition: service_healthy
+    restart: 'no'
+
+  shop-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: team262shop
+    ports:
+      - '5433:5432'
+    volumes:
+      - shop-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  shop-pgdata:
+  shop-uploads:

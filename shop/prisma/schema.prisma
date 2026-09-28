@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String    @default("") @db.Text
+  sortOrder   Int       @default(0)
+  products    Product[]
+}
+
+model Product {
+  id               String      @id @default(cuid())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  name             String
+  slug             String      @unique
+  sku              String      @default("")
+  shortDescription String      @default("")
+  description      String      @default("") @db.Text
+  /// Verkoopprijs inclusief BTW
+  price            Decimal     @db.Decimal(10, 2)
+  /// Optionele "van"-prijs voor aanbiedingen
+  compareAtPrice   Decimal?    @db.Decimal(10, 2)
+  stock            Int         @default(0)
+  active           Boolean     @default(true)
+  featured         Boolean     @default(false)
+  imageUrl         String      @default("")
+  categoryId       String?
+  category         Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  orderItems       OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  number        Int         @unique @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  /// nieuw | betaald | verzonden | afgerond | geannuleerd
+  status        String      @default("nieuw")
+  firstName     String
+  lastName      String
+  company       String      @default("")
+  email         String
+  phone         String      @default("")
+  street        String
+  houseNumber   String
+  postalCode    String
+  city          String
+  country       String      @default("Nederland")
+  notes         String      @default("") @db.Text
+  subtotal      Decimal     @db.Decimal(10, 2)
+  shippingCost  Decimal     @db.Decimal(10, 2)
+  total         Decimal     @db.Decimal(10, 2)
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name      String
+  sku       String   @default("")
+  price     Decimal  @db.Decimal(10, 2)
+  quantity  Int
+}

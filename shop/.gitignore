@@ -1,0 +1,14 @@
+/node_modules
+/.next/
+/out/
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+.env
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+
+# geüploade productfoto's (niet in git; wel in de back-up)
+/public/uploads/products/

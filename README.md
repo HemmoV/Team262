@@ -237,3 +237,10 @@ public/                CSS, JS, logo's en geüploade autofoto's
 scripts/               Hulpscripts: create-admin, seed
 data/                  SQLite-database (wordt automatisch aangemaakt)
 ```
+
+## Webshop (shop.team262.nl)
+
+In de map [`shop/`](shop/README.md) staat de webshop voor producten rond het stallen van
+auto's. Het is een aparte applicatie (Next.js + PostgreSQL) in dezelfde huisstijl, die op
+dezelfde VPS draait op poort 3001 naast deze site. Installatie, lokaal testen en publiceren
+staan in [`shop/README.md`](shop/README.md).
