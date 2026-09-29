@@ -331,6 +331,18 @@ section { padding: 80px 0; }
 .badge-gereserveerd { background: var(--warning-bg); color: var(--warning); }
 .badge-verkocht { background: var(--danger-bg); color: var(--danger); }
 
+/* Badges die over een autofoto heen staan (aanbod-overzicht, "Uitgelicht" op
+   de homepage) hebben een effen witte achtergrond nodig i.p.v. de lichte
+   transparante versie hierboven — anders is de tekst nauwelijks leesbaar
+   afhankelijk van de foto erachter. */
+.car-image .badge {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(12, 14, 17, 0.35);
+}
+.car-image .badge-beschikbaar { color: #2e7d55; }
+.car-image .badge-gereserveerd { color: #a9781f; }
+.car-image .badge-verkocht { color: #b8342f; }
+
 .car-card .car-body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 
 .car-card h3 { font-size: 1.2rem; margin: 0; }
