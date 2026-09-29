@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
   res.render('index', {
     title: 'Team262 — Exclusieve en sportieve auto\'s te koop',
     description: `${res.locals.site.naam} verkoopt exclusieve en sportieve auto's voor echte petrolheads. Bekijk ons actuele aanbod van zorgvuldig geselecteerde auto's.`,
-    ogImage: heroCar && heroCar.images && heroCar.images.length ? `/uploads/cars/${heroCar.images[0].filename}` : undefined,
+    ogImage: heroCar && heroCar.images && heroCar.images.length ? res.locals.heroUrl(heroCar.images[0].filename) : undefined,
     uitgelicht,
     heroCar,
   });

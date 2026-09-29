@@ -6,7 +6,7 @@
     <div class="container">
       <div class="hero-media<%= heroCar ? '' : ' hero-media-plain' %>">
         <% if (heroCar) { %>
-          <img class="hero-media-img" src="/uploads/cars/<%= heroCar.images[0].filename %>" alt="<%= heroCar.merk %> <%= heroCar.model %>">
+          <img class="hero-media-img" src="<%= heroUrl(heroCar.images[0].filename) %>" alt="<%= heroCar.merk %> <%= heroCar.model %>">
           <div class="hero-media-overlay"></div>
         <% } %>
         <div class="hero-content">

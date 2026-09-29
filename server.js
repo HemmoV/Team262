@@ -5,7 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const helmet = require('helmet');
-const { thumbFilename, smallThumbFilename } = require('./lib/thumbnails');
+const { thumbFilename, smallThumbFilename, heroThumbFilename } = require('./lib/thumbnails');
 
 require('./db/database'); // zorgt dat de database + tabellen bestaan
 
@@ -71,6 +71,15 @@ app.use((req, res, next) => {
   // weergavegrootte, zodat de browser minder hoeft bij te schalen.
   res.locals.smallThumbUrl = (filename) => {
     const thumb = smallThumbFilename(filename);
+    return fs.existsSync(path.join(carUploadsDir, thumb))
+      ? `/uploads/cars/${thumb}`
+      : res.locals.thumbUrl(filename);
+  };
+  // Grote, scherpe variant voor de uitgelichte foto bovenaan de homepage —
+  // voorkomt dat de (vaak zeer grote) originele foto rechtstreeks getoond
+  // wordt, wat er blokkerig/korrelig uit kan zien.
+  res.locals.heroUrl = (filename) => {
+    const thumb = heroThumbFilename(filename);
     return fs.existsSync(path.join(carUploadsDir, thumb))
       ? `/uploads/cars/${thumb}`
       : res.locals.thumbUrl(filename);
