@@ -58,6 +58,8 @@ app.use((req, res, next) => {
   // Voor de canonical-link en og:url/twitter-tags in <head> — werkt automatisch
   // op elk domein/IP waarop de site draait, zonder handmatige configuratie.
   res.locals.canonicalUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+  // Google Analytics (GA4) measurement ID — leeg = geen analytics geladen.
+  res.locals.gaId = process.env.GA_MEASUREMENT_ID || null;
   // Geeft in templates de URL van de verkleinde, scherpe thumbnail terug —
   // en valt terug op de originele foto als er (nog) geen thumbnail bestaat.
   res.locals.thumbUrl = (filename) => {

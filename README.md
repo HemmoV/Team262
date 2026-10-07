@@ -225,6 +225,14 @@ uur per IP-adres.
 
 Herstart de app na het aanpassen van `.env`: `pm2 restart team262`.
 
+## 7. Google Analytics
+
+Vul `GA_MEASUREMENT_ID` in `.env` in met je Google-tag (GA4) measurement ID
+(begint met `G-`) om bezoekersstatistieken bij te houden. De tag wordt dan op
+alle publieke pagina's geladen (niet op `/admin`). Laat dit veld leeg om geen
+analytics te laden. Herstart de app na het aanpassen van `.env`:
+`pm2 restart team262`.
+
 ## Projectstructuur
 
 ```

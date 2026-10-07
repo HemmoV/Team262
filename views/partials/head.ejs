@@ -16,6 +16,17 @@
     const _ogImagePath = typeof ogImage !== 'undefined' && ogImage ? ogImage : null;
     const _ogImageUrl = _ogImagePath && _canonical ? new URL(_ogImagePath, _canonical).toString() : null;
   %>
+  <% if (gaId && !_isAdminPage) { %>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>');
+  </script>
+  <% } %>
+
   <title><%= _title %></title>
   <meta name="description" content="<%= _description %>">
   <meta name="robots" content="<%= _noindex ? 'noindex, nofollow' : 'index, follow' %>">
