@@ -17,14 +17,9 @@
     const _ogImageUrl = _ogImagePath && _canonical ? new URL(_ogImagePath, _canonical).toString() : null;
   %>
   <% if (gaId && !_isAdminPage) { %>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '<%= gaId %>');
-  </script>
+  <!-- Google tag (gtag.js) wordt pas geladen nadat de bezoeker akkoord is
+       gegaan met de cookiebanner — zie /js/cookie-consent.js -->
+  <script>window.GA_MEASUREMENT_ID = <%- JSON.stringify(gaId) %>;</script>
   <% } %>
 
   <title><%= _title %></title>

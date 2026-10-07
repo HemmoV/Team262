@@ -699,3 +699,34 @@ textarea { resize: vertical; min-height: 110px; font-family: var(--sans); }
   .detail-cta-actions { flex-direction: column; }
   .detail-cta-actions .btn { width: 100%; text-align: center; }
 }
+
+/* ---------------------------------- Cookiebanner ---------------------------------- */
+
+.cookie-banner {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 18px 24px;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.cookie-banner.is-visible { display: flex; }
+
+.cookie-banner-text { max-width: 640px; }
+.cookie-banner-text p { margin: 0; color: var(--text-muted); font-size: 0.88rem; }
+
+.cookie-banner-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+@media (max-width: 640px) {
+  .cookie-banner { flex-direction: column; align-items: stretch; padding: 16px 20px; }
+  .cookie-banner-text { max-width: none; }
+  .cookie-banner-actions { justify-content: flex-end; }
+}
