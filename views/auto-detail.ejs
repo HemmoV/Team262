@@ -1,6 +1,8 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
 
+<script type="application/ld+json"><%- JSON.stringify(vehicleJsonLd) %></script>
+
 <main>
   <section style="padding-bottom:40px;">
     <div class="container">
@@ -27,7 +29,7 @@
       <% if (auto.images && auto.images.length > 1) { %>
         <div class="gallery-thumbs">
           <% auto.images.forEach((img, i) => { %>
-            <img src="<%= smallThumbUrl(img.filename) %>" data-full="/uploads/cars/<%= img.filename %>" class="<%= i === 0 ? 'active' : '' %>" alt="Foto <%= i + 1 %>">
+            <img src="<%= smallThumbUrl(img.filename) %>" data-full="/uploads/cars/<%= img.filename %>" class="<%= i === 0 ? 'active' : '' %>" alt="<%= auto.merk %> <%= auto.model %> — foto <%= i + 1 %>">
           <% }) %>
         </div>
       <% } %>

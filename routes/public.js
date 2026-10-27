@@ -59,12 +59,87 @@ router.get('/aanbod/:slug', (req, res) => {
   const prijsTekst = auto.prijs ? `€ ${Number(auto.prijs).toLocaleString('nl-NL')}` : 'prijs op aanvraag';
   const description = `${auto.merk} ${auto.model}${specDelen.length ? ' — ' + specDelen.join(', ') : ''}. ${prijsTekst}. Bekijk deze auto bij Team262.`;
 
+  const base = `${req.protocol}://${req.get('host')}`;
+  const pageUrl = `${base}${req.originalUrl}`;
+  const availabilityMap = {
+    beschikbaar: 'https://schema.org/InStock',
+    gereserveerd: 'https://schema.org/Reserved',
+    verkocht: 'https://schema.org/SoldOut',
+  };
+  // Structured data (schema.org) voor deze auto — stelt zoekmachines in staat
+  // om o.a. prijs en beschikbaarheid direct in de zoekresultaten te tonen.
+  const vehicleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Car',
+    name: `${auto.merk} ${auto.model}`,
+    brand: { '@type': 'Brand', name: auto.merk },
+    model: auto.model,
+    vehicleModelDate: auto.bouwjaar ? String(auto.bouwjaar) : undefined,
+    mileageFromOdometer: auto.km_stand
+      ? { '@type': 'QuantitativeValue', value: auto.km_stand, unitCode: 'KMT' }
+      : undefined,
+    fuelType: auto.brandstof || undefined,
+    vehicleTransmission: auto.transmissie || undefined,
+    color: auto.kleur || undefined,
+    image: (auto.images || []).map((img) => `${base}/uploads/cars/${img.filename}`),
+    url: pageUrl,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: auto.prijs || undefined,
+      availability: availabilityMap[auto.status] || undefined,
+      url: pageUrl,
+    },
+  };
+
   res.render('auto-detail', {
     title: `${auto.merk} ${auto.model}${auto.bouwjaar ? ' (' + auto.bouwjaar + ')' : ''} — Team262`,
     description,
     ogImage: auto.images && auto.images.length ? `/uploads/cars/${auto.images[0].filename}` : undefined,
+    // Verkochte auto's blijven bereikbaar (bv. via een oude link), maar hoeven
+    // niet in Google te (blijven) staan — dat zou verouderd aanbod tonen.
+    noindex: auto.status === 'verkocht',
+    vehicleJsonLd,
     auto,
   });
+});
+
+// Simpele XML-sitemap met de belangrijkste pagina's + alle actueel
+// aangeboden auto's (verkochte auto's staan er bewust niet in, zie ook
+// robots-meta/noindex hierboven). Helpt zoekmachines nieuwe/gewijzigde
+// pagina's sneller te vinden dan wanneer ze alles zelf via links moeten
+// ontdekken.
+router.get('/sitemap.xml', (req, res) => {
+  const base = `${req.protocol}://${req.get('host')}`;
+  const autos = cars.listCars({ onlyPublic: true });
+
+  const staticUrls = [
+    { loc: `${base}/`, priority: '1.0' },
+    { loc: `${base}/aanbod`, priority: '0.9' },
+    { loc: `${base}/over-ons`, priority: '0.6' },
+  ];
+
+  const carUrls = autos.map((auto) => ({
+    loc: `${base}/aanbod/${auto.slug}`,
+    lastmod: (auto.updated_at || '').slice(0, 10) || undefined,
+    priority: '0.8',
+  }));
+
+  const urls = [...staticUrls, ...carUrls];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) => `  <url>
+    <loc>${u.loc}</loc>
+${u.lastmod ? `    <lastmod>${u.lastmod}</lastmod>\n` : ''}    <priority>${u.priority}</priority>
+  </url>`
+  )
+  .join('\n')}
+</urlset>
+`;
+
+  res.type('application/xml').send(xml);
 });
 
 router.get('/over-ons', (req, res) => {

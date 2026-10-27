@@ -28,6 +28,25 @@
       </div>
     </div>
   </footer>
+
+  <!-- Structured data (schema.org) over het bedrijf zelf — helpt zoekmachines
+       bedrijfsgegevens (naam, adres, telefoon) correct te herkennen, bv. voor
+       een kennispaneel of lokale zoekresultaten. -->
+  <script type="application/ld+json"><%- JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'AutoDealer',
+    name: site.naam,
+    url: siteUrl + '/',
+    telephone: site.telefoon,
+    email: site.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: site.adres,
+      addressLocality: site.plaats,
+      addressCountry: 'NL',
+    },
+  }) %></script>
+
   <%- include('cookie-banner') %>
   <script src="/js/main.js"></script>
   <script src="/js/cookie-consent.js"></script>

@@ -5,6 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const helmet = require('helmet');
+const compression = require('compression');
 const { thumbFilename, smallThumbFilename, heroThumbFilename } = require('./lib/thumbnails');
 
 require('./db/database'); // zorgt dat de database + tabellen bestaan
@@ -27,6 +28,10 @@ app.use(
     contentSecurityPolicy: false, // eenvoudig gehouden; zet aan/verfijn dit als je externe scripts toevoegt
   })
 );
+// Comprimeert (gzip) HTML/CSS/JS/JSON-responses — kleinere, snellere pagina's.
+// Foto's worden al als jpg geleverd en hebben hier weinig baat bij, maar
+// compression slaat die automatisch over (herkent al-gecomprimeerde typen).
+app.use(compression());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -58,6 +63,9 @@ app.use((req, res, next) => {
   // Voor de canonical-link en og:url/twitter-tags in <head> — werkt automatisch
   // op elk domein/IP waarop de site draait, zonder handmatige configuratie.
   res.locals.canonicalUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+  // Basis-URL van de site (zonder pad) — handig voor structured data (JSON-LD)
+  // en andere plekken waar een absolute link naar de homepage nodig is.
+  res.locals.siteUrl = `${req.protocol}://${req.get('host')}`;
   // Google Analytics (GA4) measurement ID — leeg = geen analytics geladen.
   res.locals.gaId = process.env.GA_MEASUREMENT_ID || null;
   // Geeft in templates de URL van de verkleinde, scherpe thumbnail terug —
