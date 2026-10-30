@@ -243,7 +243,11 @@ p { margin: 0 0 1em; color: var(--text-muted); }
 
 /* ---------------------------------- Pillars (homepage, onder de hero) ---------------------------------- */
 
-.pillars-section { padding-top: 0; }
+.pillars-section { padding-top: 0; padding-bottom: 24px; }
+/* De sectie direct na de pillars (bv. "Uitgelicht") heeft dan geen eigen
+   padding-top meer nodig — anders telt dat bij de padding-bottom hierboven op
+   tot een te grote lege ruimte. */
+.pillars-section + section { padding-top: 0; }
 
 .pillar-grid {
   display: grid;
